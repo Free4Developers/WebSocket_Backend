@@ -22,12 +22,12 @@ class JwtAuthenticationToken: AbstractAuthenticationToken {
         fun newAfterJwtAuthenticationToken(member: Member): JwtAuthenticationToken = JwtAuthenticationToken(member)
     }
 
-    override fun getCredentials(): Nothing {
-        throw NotSupportedException()
+    override fun getCredentials(): String {
+        return ""
     }
 
-    override fun getPrincipal(): Member {
-        return this.member ?: throw NotSupportedException("인증 전 객체는 지원하지 않는 메소드입니다.")
+    override fun getPrincipal(): Member? {
+        return this.member
     }
 
     fun getAuthorizationHeader(): String = this.authorizationHeader ?: throw NotSupportedException("인증 후 객체는 지원하지 않는 메소드입니다.")

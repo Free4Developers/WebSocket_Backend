@@ -4,6 +4,7 @@ import com.free4developer.sampleserver.domain.member.service.MemberService
 import com.free4developer.sampleserver.helper.JwtHelper
 import io.jsonwebtoken.Claims
 import org.springframework.security.authentication.AuthenticationProvider
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 
@@ -13,12 +14,15 @@ class JwtAuthenticationProvider(
     val jwtHelper: JwtHelper
 ): AuthenticationProvider {
 
-    override fun authenticate(authentication: Authentication): Authentication {
+    override fun authenticate(authentication: Authentication): Authentication? {
         val accessToken: String = (authentication as JwtAuthenticationToken).getAuthorizationHeader()
-        jwtHelper.validateJwt(accessToken)
+
+        if (!jwtHelper.validateJwt(accessToken)) {
+            throw java.lang.RuntimeException("Invalid JWT token information.")
+        }
 
         val id: Long = jwtHelper.getClaim(accessToken, Claims::getSubject).toLong()
-        val member = memberService.findByMember(id)
+        val member = memberService.getMemberById(id)
         return JwtAuthenticationToken.newAfterJwtAuthenticationToken(member)
     }
 

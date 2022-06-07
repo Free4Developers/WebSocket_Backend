@@ -1,9 +1,13 @@
 package com.free4developer.sampleserver.config
 
 import com.free4developer.sampleserver.domain.oauth2.service.OAuth2UserServiceImpl
+import com.free4developer.sampleserver.security.FilterSkipMatcher
 import com.free4developer.sampleserver.security.jwt.JwtAuthenticationFilter
+import com.free4developer.sampleserver.security.jwt.JwtAuthenticationProvider
 import com.free4developer.sampleserver.security.oauth.OAuth2SuccessHandler
 import org.springframework.context.annotation.Bean
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -18,20 +22,21 @@ import java.util.stream.Collectors
 @EnableWebSecurity
 class SecurityConfig(
     val customUserService : OAuth2UserServiceImpl,
-    val customSuccessHandler : OAuth2SuccessHandler
+    val customSuccessHandler : OAuth2SuccessHandler,
+    val jwtAuthenticationProvider: JwtAuthenticationProvider
 ) : WebSecurityConfigurerAdapter() {
     companion object {
         const val REDIRECT_URI = "/oauth2/login/callback/*"
         val AUTH_WHITELIST_SWAGGER = listOf("/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
             "/configuration/security", "/swagger-ui.html/**", "/swagger-ui/**", "/webjars/**", "/swagger/**")
         val AUTH_WHITELIST_DEFAULT = listOf("/auth/**", "/oauth2/**")
+        val AUTH_WHITELIST_H2_DATABASE = listOf("/h2-console/**")
     }
 
     override fun configure(http: HttpSecurity) {
         http {
             csrf { disable() }
             headers { frameOptions { disable() } }
-            authorizeRequests { authorize("/h2-console", permitAll) }
 
             sessionManagement { sessionCreationPolicy = SessionCreationPolicy.STATELESS }
 
@@ -40,20 +45,28 @@ class SecurityConfig(
                 userInfoEndpoint { userService = customUserService }
                 authenticationSuccessHandler = customSuccessHandler
             }
-        }
 
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
+            addFilterBefore<UsernamePasswordAuthenticationFilter>(jwtAuthenticationFilter())
+        }
     }
 
     @Bean
+    fun getAuthenticationManager(): AuthenticationManager {
+        return super.authenticationManager()
+    }
+
+    override fun configure(auth: AuthenticationManagerBuilder) {
+        auth.authenticationProvider(jwtAuthenticationProvider)
+    }
+
     fun jwtAuthenticationFilter(): JwtAuthenticationFilter {
         val skipPaths = mutableListOf<String>()
         skipPaths.addAll(AUTH_WHITELIST_DEFAULT)
         skipPaths.addAll(AUTH_WHITELIST_SWAGGER)
+        skipPaths.addAll(AUTH_WHITELIST_H2_DATABASE)
 
-        val matcher: RequestMatcher = OrRequestMatcher(skipPaths.stream()
-            .map { AntPathRequestMatcher(it) }
-            .collect(Collectors.toList()) as List<RequestMatcher>)
+        val matcher = FilterSkipMatcher(skipPaths)
+
         val jwtAuthenticationFilter = JwtAuthenticationFilter(matcher)
         jwtAuthenticationFilter.setAuthenticationManager(super.authenticationManager())
         return jwtAuthenticationFilter

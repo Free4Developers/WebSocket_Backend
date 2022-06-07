@@ -10,14 +10,12 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class MemberService(
-    val memberRepository: MemberRepository,
-    val objectMapper: ObjectMapper
+    val memberRepository: MemberRepository
 ) {
 
-    fun findMemberById(id: Long): MemberDto =
-        objectMapper.convertValue(memberRepository.findById(id), MemberDto::class.java)
-
-    fun findByMember(id: Long): Member = memberRepository.findById(id).orElseThrow()
+    fun getMemberById(id: Long): Member {
+        return memberRepository.findById(id).orElseThrow()
+    }
 
     @Transactional
     fun signupWithOAuth2(email: String, nickname: String, password: String, memberType: String): Member {
