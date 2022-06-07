@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.config.web.servlet.invoke
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.security.web.util.matcher.OrRequestMatcher
 import org.springframework.security.web.util.matcher.RequestMatcher
@@ -33,13 +34,15 @@ class SecurityConfig(
             authorizeRequests { authorize("/h2-console", permitAll) }
 
             sessionManagement { sessionCreationPolicy = SessionCreationPolicy.STATELESS }
-            addFilterBefore<JwtAuthenticationFilter>(jwtAuthenticationFilter())
+
             oauth2Login {
                 redirectionEndpoint { baseUri = REDIRECT_URI }
                 userInfoEndpoint { userService = customUserService }
                 authenticationSuccessHandler = customSuccessHandler
             }
         }
+
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
     }
 
     @Bean
