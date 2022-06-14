@@ -4,7 +4,6 @@ import com.free4developer.sampleserver.domain.member.service.MemberService
 import com.free4developer.sampleserver.helper.JwtHelper
 import io.jsonwebtoken.Claims
 import org.springframework.security.authentication.AuthenticationProvider
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 

@@ -4,7 +4,6 @@ import com.free4developer.sampleserver.domain.member.entity.Member
 import com.free4developer.sampleserver.domain.member.entity.MemberType
 import com.free4developer.sampleserver.dto.MemberDto
 import org.springframework.data.repository.CrudRepository
-import java.util.*
 
 interface MemberRepository : CrudRepository<Member, Long> {
     fun findMemberById(id: Long): MemberDto
