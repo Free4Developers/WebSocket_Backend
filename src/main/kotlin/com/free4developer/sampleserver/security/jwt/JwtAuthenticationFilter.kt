@@ -19,7 +19,7 @@ class JwtAuthenticationFilter(
     }
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
-        val authorizationHeader = request.getHeader(AUTHORIZATION_HEADER)?.substring(AUTHORIZATION_TYPE.length + 1) ?: throw RuntimeException("Invalid JWT token information.")
+        val authorizationHeader = request.getHeader(AUTHORIZATION_HEADER)?.substring(AUTHORIZATION_TYPE.length + 1) ?: throw RuntimeException("Not Found JWT token information.")
         val authToken = JwtAuthenticationToken.newBeforeJwtAuthenticationToken(authorizationHeader)
         return super.getAuthenticationManager().authenticate(authToken)
     }

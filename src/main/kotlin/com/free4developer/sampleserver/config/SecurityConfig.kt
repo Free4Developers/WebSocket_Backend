@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -26,10 +27,15 @@ class SecurityConfig(
 ) : WebSecurityConfigurerAdapter() {
     companion object {
         const val REDIRECT_URI = "/oauth2/login/callback/*"
+        const val ERROR_PATH = "/error"
         val AUTH_WHITELIST_SWAGGER = listOf("/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
             "/configuration/security", "/swagger-ui.html/**", "/swagger-ui/**", "/webjars/**", "/swagger/**")
         val AUTH_WHITELIST_DEFAULT = listOf("/auth/**", "/oauth2/**")
         val AUTH_WHITELIST_H2_DATABASE = listOf("/h2-console/**")
+    }
+
+    override fun configure(web: WebSecurity) {
+        web.ignoring().antMatchers(ERROR_PATH)
     }
 
     override fun configure(http: HttpSecurity) {
