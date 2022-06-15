@@ -19,6 +19,7 @@ class ChatController(
 
     @MessageMapping("/chat/message")
     fun sendMessage(message: ChatMessageDto) {
+        message.message = "${message.writerNickname} : ${message.message}"
         template.convertAndSend("/channel/room/open", message)
     }
 
