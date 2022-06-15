@@ -10,9 +10,9 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 class ChatConfig : WebSocketMessageBrokerConfigurer {
     companion object {
-        const val OPEN_CHAT_PATH = "/ws/chat/open"
+        const val OPEN_CHAT_PATH = "/stomp/chat"
         const val OPEN_CHAT_BROKER_SUBSCRIBE_PREFIX = "/channel"
-        const val OPEN_CHAT_SEND_PREFIX = "/send"
+        const val OPEN_CHAT_SEND_PREFIX = "/publish"
     }
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
