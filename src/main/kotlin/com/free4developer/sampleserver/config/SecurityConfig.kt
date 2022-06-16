@@ -32,7 +32,7 @@ class SecurityConfig(
             "/configuration/security", "/swagger-ui.html/**", "/swagger-ui/**", "/webjars/**", "/swagger/**")
         val AUTH_WHITELIST_DEFAULT = listOf("/auth/**", "/oauth2/**")
         val AUTH_WHITELIST_H2_DATABASE = listOf("/h2-console/**")
-        val AUTH_WHITELIST_CHAT = listOf("/publish/**", "/channel/**", "/stomp/chat")
+        val AUTH_WHITELIST_CHAT = listOf("/publish/**", "/channel/**", "/stomp/chat/**")
     }
 
     override fun configure(web: WebSecurity) {
