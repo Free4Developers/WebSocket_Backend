@@ -32,6 +32,7 @@ class SecurityConfig(
             "/configuration/security", "/swagger-ui.html/**", "/swagger-ui/**", "/webjars/**", "/swagger/**")
         val AUTH_WHITELIST_DEFAULT = listOf("/auth/**", "/oauth2/**")
         val AUTH_WHITELIST_H2_DATABASE = listOf("/h2-console/**")
+        val AUTH_WHITELIST_CHAT = listOf("/publish/**", "/channel/**", "/stomp/chat")
     }
 
     override fun configure(web: WebSecurity) {
@@ -84,6 +85,7 @@ class SecurityConfig(
         skipPaths.addAll(AUTH_WHITELIST_DEFAULT)
         skipPaths.addAll(AUTH_WHITELIST_SWAGGER)
         skipPaths.addAll(AUTH_WHITELIST_H2_DATABASE)
+        skipPaths.addAll(AUTH_WHITELIST_CHAT)
 
         val matcher = FilterSkipMatcher(skipPaths)
 
