@@ -41,7 +41,6 @@ class ChatController(
 
     @MessageMapping("/chat/message")
     fun sendMessage(message: ChatMessageDto) {
-        // TODO : Nickname 초기화 안되는지 반드시 테스트 후 확인!!
         template.convertAndSend("/channel/chat/room/" + message.roomId, message)
     }
 

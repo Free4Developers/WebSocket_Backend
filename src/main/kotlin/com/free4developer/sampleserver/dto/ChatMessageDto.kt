@@ -6,7 +6,7 @@ import com.free4developer.sampleserver.domain.member.service.MemberService
 data class ChatMessageDto(
     var roomId: String,
     var writerId: Long,
-    var message: String
+    var message: String?
 ) {
     val writerNickname: String by lazy {
         ApplicationContextProvider.getBean(MemberService::class)
