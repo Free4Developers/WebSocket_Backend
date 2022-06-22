@@ -9,8 +9,12 @@ data class ChatMessageDto(
     var message: String?
 ) {
     val writerNickname: String by lazy {
-        ApplicationContextProvider.getBean(MemberService::class)
-            .getMemberById(writerId)
-            .nickname
+        if (writerId == -1L) {
+            "Server"
+        } else {
+            ApplicationContextProvider.getBean(MemberService::class)
+                .getMemberById(writerId)
+                .nickname
+        }
     }
 }

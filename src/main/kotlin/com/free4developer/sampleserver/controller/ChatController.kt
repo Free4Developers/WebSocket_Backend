@@ -23,20 +23,20 @@ class ChatController(
 
     @MessageMapping("/chat/enter")
     fun enter(message: ChatMessageDto) {
-        message.message = "${message.writerNickname} 님이 입장하셨습니다."
         chatRepository.findChatRoomById(message.roomId)
             .join(message.writerId)
 
-        template.convertAndSend("/channel/chat/room/" + message.roomId, message)
+        val serverMessage = ChatMessageDto(roomId = message.roomId, writerId = -1, message = "${message.writerNickname} 님이 입장하셨습니다.")
+        template.convertAndSend("/channel/chat/room/" + serverMessage.roomId, serverMessage)
     }
 
     @MessageMapping("/chat/leave")
     fun leave(message: ChatMessageDto) {
-        message.message = "${message.writerNickname} 님이 퇴장하셨습니다."
         chatRepository.findChatRoomById(message.roomId)
             .leave(message.writerId)
 
-        template.convertAndSend("/channel/chat/room/" + message.roomId, message)
+        val serverMessage = ChatMessageDto(roomId = message.roomId, writerId = -1, message = "${message.writerNickname} 님이 입장하셨습니다.")
+        template.convertAndSend("/channel/chat/room/" + serverMessage.roomId, serverMessage)
     }
 
     @MessageMapping("/chat/message")
